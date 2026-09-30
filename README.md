@@ -14,4 +14,4 @@ npm install
 npm run dev
 ```
 
-Pushes to `main` that touch `docs/` deploy to GitHub Pages via `.github/workflows/deploy.yml`.
+Pushes to the `project-page` branch that touch `docs/` deploy to GitHub Pages via `.github/workflows/deploy.yml`.

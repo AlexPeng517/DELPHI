@@ -2,9 +2,8 @@ name: Deploy DELPHI page to GitHub Pages
 
 on:
   push:
-    # Deploy when the page changes on main. To deploy from a dedicated
-    # page branch instead, change this to e.g. ["web/project-page"].
-    branches: ["main"]
+    # Deploy when the page changes on the project-page branch.
+    branches: ["project-page"]
     paths:
       - "docs/**"
       - ".github/workflows/deploy.yml"
