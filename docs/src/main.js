@@ -1,4 +1,12 @@
 import { WebViewer } from "@rerun-io/web-viewer";
+import pkg from "../package.json";
+
+// The viewer runtime (re_viewer_bg.wasm, ~48 MB raw) is fetched from jsDelivr
+// rather than from our own host: GitHub Pages serves big files at a few
+// hundred KB/s, which made the first viewer take over a minute to start. The
+// version comes from package.json so the wasm always matches the bundled JS
+// glue. If the CDN fails, boot()'s retry falls back to the bundled copy.
+const VIEWER_CDN = `https://cdn.jsdelivr.net/npm/@rerun-io/web-viewer@${pkg.dependencies["@rerun-io/web-viewer"]}/`;
 
 /* =====================================================================
    THREE viewers on this page, each its own WebViewer instance (own wasm
@@ -169,7 +177,11 @@ window.fetch = async (input, init) => {
   const track = url && progressHandlers.get(url);
   const res = await nativeFetch(input, init);
   if (!track || !res.ok || !res.body) return res;
-  const total = Number(res.headers.get("content-length")) || 0;
+  // Content-Length is the size ON THE WIRE. If the host compressed the file
+  // (GitHub Pages gzips .rrd), the stream yields more decoded bytes than that,
+  // so the total is unknown — show bytes received instead of a wrong percent.
+  const enc = res.headers.get("content-encoding");
+  const total = enc && enc !== "identity" ? 0 : Number(res.headers.get("content-length")) || 0;
   const body = res.body; // reading the getter neither locks nor consumes it
   let counted = null;
   const countedBody = () => {
@@ -371,8 +383,11 @@ function createViewer(cfg) {
       height: "100%",
       ...(CAPS.themeOption ? { theme: "dark" } : {}),
     };
+    // start() deletes base_url from the options object it is given, so pass
+    // a copy — the retry below then boots from the bundled wasm instead.
+    const cdnOpts = { ...opts, base_url: VIEWER_CDN };
     try {
-      await viewer.start(null, mount, opts);
+      await viewer.start(null, mount, cdnOpts);
     } catch (firstErr) {
       // WebGPU can be flaky; one retry on WebGL before giving up.
       console.warn("[DELPHI viewer] start failed, retrying with WebGL", firstErr);
