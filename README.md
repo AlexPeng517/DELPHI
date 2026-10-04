@@ -4,7 +4,7 @@ Project page for **Beyond the Visible: Learning Dense 4D Motion in Contact-Rich 
 
 **Live page:** https://alexpeng517.github.io/DELPHI/
 
-The page embeds interactive [Rerun](https://rerun.io) viewers. Smaller recordings live in `docs/public/recordings/`; the large ADYTON benchmark and multi-view recordings are served from the [`AlexPeng/delphi-recordings`](https://huggingface.co/datasets/AlexPeng/delphi-recordings) Hugging Face dataset.
+The page embeds interactive [Rerun](https://rerun.io) viewers. Smaller recordings live in `docs/public/recordings/`; the large ADYTON benchmark pre-view and multi-view preview rerun recordings are served from the [`AlexPeng/delphi-recordings`](https://huggingface.co/datasets/AlexPeng/delphi-recordings) Hugging Face dataset.
 
 ## Run locally
 
